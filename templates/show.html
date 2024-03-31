@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ board.title }}の詳細画面{% endblock %}
+
+{% block content %}
+    <section>
+        <h2>{{ board.title }}の詳細画面</h2>
+        <p>{{ board.content }}</p>
+        <p>
+            作成日時: {{ board.created_at }}</br>
+            更新日時: {{ board.updated_at }}
+        </p>
+        <a href="{% url 'index' %}" class="btn btn-primary">一覧に戻る</a>
+        <a href="{% url 'edit' pk=board.id %}" class="btn btn-success">編集する</a>
+        <form action="{% url 'delete' pk=board.pk %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <button type="submit" class="btn btn-danger">削除する</button>
+        </form>
+    </section>
+{% endblock %}

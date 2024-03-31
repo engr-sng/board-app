@@ -1,0 +1,16 @@
+/* 全体的に適用 */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: inherit;
+    list-style-position: inside;
+}
+
+/* フォントデザイン */
+body {
+    font-size: 16px;
+    color: #333333;
+    font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+}
