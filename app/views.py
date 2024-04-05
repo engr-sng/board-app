@@ -46,4 +46,4 @@ def delete(request, pk):
     if request.method == 'POST':
         board.delete()
         return redirect('index')
-    return redirect('show', pk=pk)
+    return redirect('index', pk=pk)
