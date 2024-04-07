@@ -5,6 +5,17 @@ from .forms import BoardForm, SignUpForm
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
+from functools import wraps
+
+def user_owns_board(view_func):
+    @wraps(view_func)
+    def wrapper(request, pk):
+        board = get_object_or_404(Board, pk=pk)
+        if board.user == request.user:
+            return view_func(request, pk)
+        else:
+            return redirect('index')
+    return wrapper
 
 def index(request):
     boards = Board.objects.all().order_by('-updated_at')
@@ -20,6 +31,7 @@ def create(request):
     if request.method == 'POST':
         form = BoardForm(request.POST)
         if form.is_valid():
+            form.instance.user = request.user
             form.save()
             return redirect('index')
     else:
@@ -32,12 +44,14 @@ def show(request, pk):
     return render(request, 'show.html', {'board': board})
 
 @login_required
+@user_owns_board
 def edit(request, pk):
     board = Board.objects.get(pk=pk)
     form = BoardForm(instance=board)
     return render(request, 'edit.html', {'form': form, 'board': board})
 
 @login_required
+@user_owns_board
 def update(request, pk):
     board = Board.objects.get(pk=pk)
     if request.method == 'POST':
@@ -50,6 +64,7 @@ def update(request, pk):
     return render(request, 'edit.html', {'form': form, 'board': board})
 
 @login_required
+@user_owns_board
 def delete(request, pk):
     board = get_object_or_404(Board, pk=pk)
     if request.method == 'POST':
@@ -85,3 +100,4 @@ def profile(request):
         'user': user
     }
     return render(request, 'accounts/profile.html', context)
+

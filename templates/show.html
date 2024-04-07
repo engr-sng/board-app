@@ -11,11 +11,13 @@
             更新日時: {{ board.updated_at }}
         </p>
         <a href="{% url 'index' %}" class="btn btn-primary">一覧に戻る</a>
-        <a href="{% url 'edit' pk=board.id %}" class="btn btn-success">編集する</a>
-        <form action="{% url 'delete' pk=board.pk %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="delete">
-            <button type="submit" class="btn btn-danger">削除する</button>
-        </form>
+        {% if board.user == request.user %}
+            <a href="{% url 'edit' pk=board.id %}" class="btn btn-success">編集する</a>
+            <form action="{% url 'delete' pk=board.pk %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="btn btn-danger">削除する</button>
+            </form>
+        {% endif %}
     </section>
 {% endblock %}
