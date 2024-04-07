@@ -1,12 +1,10 @@
 # app/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Board
-from .forms import BoardForm
+from .forms import BoardForm, SignUpForm
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
 
 def index(request):
     boards = Board.objects.all().order_by('-updated_at')
@@ -71,12 +69,12 @@ def logout_view(request):
 # サインアップページのビュー
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')  # サインアップ成功時はログインページにリダイレクト
+            return redirect('login')
     else:
-        form = UserCreationForm()
+        form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 # プロフィールページのビュー
