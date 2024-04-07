@@ -72,6 +72,12 @@ def delete(request, pk):
         return redirect('index')
     return redirect('index', pk=pk)
 
+@login_required
+def my_boards(request):
+    user = request.user
+    boards = user.boards.all()
+    return render(request, 'my_boards.html', {'boards': boards})
+
 # ログインページのビュー
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'

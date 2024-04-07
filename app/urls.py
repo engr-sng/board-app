@@ -12,4 +12,5 @@ urlpatterns = [
     path('<int:pk>/edit/', login_required(views.edit), name='edit'),
     path('<int:pk>/update/', login_required(views.update), name='update'),
     path('<int:pk>/delete/', login_required(views.delete), name='delete'),
+    path('my_boards/', login_required(views.my_boards), name='my_boards'),
 ]
