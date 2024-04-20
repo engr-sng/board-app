@@ -41,7 +41,7 @@ def create(request):
 @login_required
 def show(request, pk):
     board = Board.objects.get(pk=pk)
-    comments = Comment.objects.filter(board=pk)
+    comments = Comment.objects.filter(board=pk).order_by('-created_at')
     comment_form = CommentForm()
     return render(request, 'show.html', {'board': board, 'comments': comments, 'comment_form': comment_form})
 
