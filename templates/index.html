@@ -29,10 +29,30 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th scope="col">掲示板ID</th>
-                    <th scope="col">タイトル</th>
-                    <th scope="col">投稿日時</th>
-                    <th scope="col">更新日時</th>
+                    <th scope="col">
+                        掲示板ID
+                        <a href="{% url 'sort' %}?sort=id&direction={{ next_direction|default:'asc' }}">
+                            {% include 'direction.html' with sort_field='id' field=sort_by direction=direction %}
+                        </a>
+                    </th>
+                    <th scope="col">
+                        タイトル
+                        <a href="{% url 'sort' %}?sort=title&direction={{ next_direction|default:'asc' }}">
+                            {% include 'direction.html' with sort_field='title' field=sort_by direction=direction %}
+                        </a>
+                    </th>
+                    <th scope="col">
+                        投稿日時
+                        <a href="{% url 'sort' %}?sort=created_at&direction={{ next_direction|default:'asc' }}">
+                            {% include 'direction.html' with sort_field='created_at' field=sort_by direction=direction %}
+                        </a>
+                    </th>
+                    <th scope="col">
+                        更新日時
+                        <a href="{% url 'sort' %}?sort=updated_at&direction={{ next_direction|default:'asc' }}">
+                            {% include 'direction.html' with sort_field='updated_at' field=sort_by direction=direction %}
+                        </a>
+                    </th>
                 </tr>
             </thead>
             <tbody>
