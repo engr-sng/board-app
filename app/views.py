@@ -1,11 +1,14 @@
 # app/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Board, Comment
-from .forms import BoardForm, SignUpForm, CommentForm
+from .models import Board, Comment, Favorite
+from .forms import BoardForm, SignUpForm, CommentForm, FavoriteForm
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from functools import wraps
+from django.http import JsonResponse
+from django.db.models import Count
+from django.db import models
 
 def user_owns_board(view_func):
     @wraps(view_func)
@@ -18,7 +21,8 @@ def user_owns_board(view_func):
     return wrapper
 
 def index(request):
-    boards = Board.objects.all().order_by('-updated_at')
+    user = request.user
+    boards = Board.objects.annotate(is_favorite=Count('favorite', filter=models.Q(favorite__user=user))).order_by('-updated_at')
     return render(request, 'index.html', {'boards': boards})
 
 @login_required
@@ -145,6 +149,24 @@ def board_sort(request):
         'next_direction': next_direction
     }
     return render(request, 'index.html', context)
+
+@login_required
+def add_favorite(request):
+    if request.method == 'POST':
+        form = FavoriteForm(request.POST)
+        if form.is_valid():
+            form.instance.user = request.user
+            form.save()
+            return redirect('index')
+    return redirect('index')
+
+@login_required
+def remove_favorite(request):
+    if request.method == 'POST':
+        favorite = Favorite.objects.get(user=request.user, board=request.POST.get('board'))
+        favorite.delete()
+        return redirect('index')
+    return redirect('index')
 
 # ログインページのビュー
 class CustomLoginView(LoginView):
