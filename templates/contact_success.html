@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}お問い合わせ{% endblock %}
+
+{% block content %}
+<section class="container">
+    <p>お問い合わせありがとうございます。</p>
+    <p>後日、担当者よりご連絡させていただきますので、しばらくお待ちください。</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">ホームに戻る</a>
+</section>
+{% endblock %}
