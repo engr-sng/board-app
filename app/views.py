@@ -22,7 +22,11 @@ def user_owns_board(view_func):
 
 def index(request):
     user = request.user
-    boards = Board.objects.annotate(is_favorite=Count('favorite', filter=models.Q(favorite__user=user))).order_by('-updated_at')
+
+    if user.is_authenticated:
+        boards = Board.objects.annotate(is_favorite=Count('favorite', filter=models.Q(favorite__user=user))).order_by('-updated_at')
+    else:
+        boards = Board.objects.all().order_by('-updated_at')
     return render(request, 'index.html', {'boards': boards})
 
 @login_required
