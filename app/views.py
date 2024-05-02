@@ -1,7 +1,7 @@
 # app/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Board, Comment, Favorite
-from .forms import BoardForm, SignUpForm, CommentForm, FavoriteForm
+from .forms import BoardForm, SignUpForm, CommentForm, FavoriteForm, ContactForm
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,8 @@ from functools import wraps
 from django.http import JsonResponse
 from django.db.models import Count
 from django.db import models
+from django.core.mail import send_mail
+from django.conf import settings
 
 def user_owns_board(view_func):
     @wraps(view_func)
@@ -171,6 +173,30 @@ def remove_favorite(request):
         favorite.delete()
         return redirect('index')
     return redirect('index')
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            contact = form.save()
+
+            # ユーザーへのメール
+            user_subject = 'お問い合わせを受け付けました'
+            user_message = 'お問い合わせ内容：\n\n{}'.format(contact.message)
+            send_mail(user_subject, user_message, settings.EMAIL_HOST_USER, [contact.email])
+
+            # 運営者へのメール
+            admin_subject = '新しいお問い合わせがありました'
+            admin_message = 'お問い合わせ内容：\n\n{}'.format(contact.message)
+            send_mail(admin_subject, admin_message, settings.EMAIL_HOST_USER, [settings.EMAIL_HOST_USER])
+
+            return redirect('contact_success')
+    else:
+        form = ContactForm()
+    return render(request, 'contact.html', {'form': form})
+
+def contact_success(request):
+    return render(request, 'contact_success.html')
 
 # ログインページのビュー
 class CustomLoginView(LoginView):

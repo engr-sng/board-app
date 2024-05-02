@@ -1,6 +1,6 @@
 # app/forms.py
 from django import forms
-from .models import Board, Comment, Favorite
+from .models import Board, Comment, Favorite, Contact
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -26,3 +26,8 @@ class FavoriteForm(forms.ModelForm):
     class Meta:
         model = Favorite
         fields = ['board']
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ['title', 'message', 'email']

@@ -30,3 +30,12 @@ class Favorite(models.Model):
 
     class Meta:
         unique_together = ('user', 'board')
+
+class Contact(models.Model):
+    title = models.CharField(max_length=100)
+    message = models.TextField()
+    email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

@@ -30,12 +30,14 @@
                             {% csrf_token %}
                             <button type="submit" class="btn btn-light">ログアウト</button>
                         </form>
+                        <a href="{% url 'contact' %}" class="btn btn-light">お問い合わせ</a>
                     </div>
-                    {% else %}
+                {% else %}
                     <!-- ログインしていない場合 -->
                     <div>
                         <a href="{% url 'signup' %}" class="btn btn-light">サインアップ</a>
                         <a href="{% url 'login' %}" class="btn btn-light">ログイン</a>
+                        <a href="{% url 'contact' %}" class="btn btn-light">お問い合わせ</a>
                     </div>
                 {% endif %}
                 </div>
