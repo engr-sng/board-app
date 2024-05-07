@@ -100,7 +100,9 @@ def comment_create(request, pk):
             comment_form.instance.board_id = pk
             comment = comment_form.save()
 
-        # 掲示板所有者にメール通知
+        # 掲示板所有者とお気に入りに登録しているユーザーにメール通知
+        favorite_users = Board.objects.get(pk=pk).favorited_by.values_list('email', flat=True)
+        recipient_list = [Board.objects.get(pk=pk).user.email] + list(favorite_users)
         subject = '新しいコメントが投稿されました。'
         message = render_to_string('mail/comment_notification_email.html', {
             'title': Board.objects.get(pk=pk).title,
@@ -108,7 +110,7 @@ def comment_create(request, pk):
             'user': request.user.username,
             'comment': comment.content,
         })
-        send_mail(subject, message, settings.EMAIL_HOST_USER, [Board.objects.get(pk=pk).user.email])
+        send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
 
     return redirect('show', pk=pk)
 
