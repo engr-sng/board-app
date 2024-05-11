@@ -13,6 +13,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- CSSファイルを読み込む -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <!-- jQueryのCDNを読み込む -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- BootstrapのCDNを読み込む -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- 静的ファイルとして保存されたJavaScriptを読み込む -->
+    <script src="{% static 'js/common.js' %}"></script>
 </head>
 <body>
     <!-- ヘッダーの内容 -->
@@ -44,6 +50,25 @@
             </div>
         </div>
     </header>
+
+    <!-- フラッシュメッセージ -->
+    {% if messages %}
+        <div class="text-center">
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% elif message.tags == 'error' %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <!-- 各ページの内容 -->
     <main>
