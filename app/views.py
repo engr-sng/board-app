@@ -32,7 +32,7 @@ def index(request):
     else:
         boards_query = Board.objects.all().order_by('-updated_at')
 
-    paginator = Paginator(boards_query, 1)
+    paginator = Paginator(boards_query, 10)
     page_number = request.GET.get('page')
     boards = paginator.get_page(page_number)
 
