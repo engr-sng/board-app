@@ -13,6 +13,7 @@ from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
+from django.contrib import messages
 
 def user_owns_board(view_func):
     @wraps(view_func)
@@ -50,7 +51,10 @@ def create(request):
         if form.is_valid():
             form.instance.user = request.user
             form.save()
+            messages.success(request, '投稿が成功しました！')
             return redirect('index')
+        else:
+            messages.error(request, '入力内容にエラーがあります。')
     else:
         form = BoardForm()
     return render(request, 'new.html', {'form': form})
@@ -223,9 +227,20 @@ def contact_success(request):
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
 
+    def form_valid(self, form):
+        # ログインに成功した場合の処理
+        messages.success(self.request, 'ログインに成功しました。')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # ログインに失敗した場合の処理
+        messages.error(self.request, 'ログインに失敗しました。ユーザー名とパスワードを確認してください。')
+        return super().form_invalid(form)
+
 # ログアウト
 def logout_view(request):
     logout(request)
+    messages.success(request, 'ログアウトに成功しました。')
     return redirect('index')
 
 # サインアップページのビュー
@@ -234,7 +249,10 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'サインアップに成功しました。')
             return redirect('login')
+        else:
+            messages.error(request, '入力内容にエラーがあります。')
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
