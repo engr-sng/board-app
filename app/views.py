@@ -12,6 +12,7 @@ from django.db import models
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
 
 def user_owns_board(view_func):
     @wraps(view_func)
@@ -27,9 +28,14 @@ def index(request):
     user = request.user
 
     if user.is_authenticated:
-        boards = Board.objects.annotate(is_favorite=Count('favorite', filter=models.Q(favorite__user=user))).order_by('-updated_at')
+        boards_query = Board.objects.annotate(is_favorite=Count('favorite', filter=models.Q(favorite__user=user))).order_by('-updated_at')
     else:
-        boards = Board.objects.all().order_by('-updated_at')
+        boards_query = Board.objects.all().order_by('-updated_at')
+
+    paginator = Paginator(boards_query, 1)
+    page_number = request.GET.get('page')
+    boards = paginator.get_page(page_number)
+
     return render(request, 'index.html', {'boards': boards})
 
 @login_required
