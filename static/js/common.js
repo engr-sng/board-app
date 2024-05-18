@@ -19,9 +19,9 @@ $(document).on('click', '.favorite-form', function(e) {
         if (response.status === 'success') {
             $form.closest('td').html(response.html);
         } else {
-            alert('There was an error: ' + response.message);
+            alert('エラーが発生しました: ' + response.message);
         }
     }).fail(function(response){
-        alert('There was an error processing your request. Please try again.');
+        alert('エラーが発生しました: リクエストを処理しています。もう一度試してください。');
     });
 });
