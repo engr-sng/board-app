@@ -3,34 +3,25 @@ $(document).ready(function(){
     $(".alert").delay(3000).fadeOut("slow");
 });
 
-$(document).ready(function() {
-    $('.favorite-form').on('submit', function(e) {
+// お気に入りボタンの非同期通信
+    $(document).on('click', '.favorite-form', function(e) {
         e.preventDefault();
-        var $form = $(this);
-        var url = $form.attr('action');
-        var data = $form.serialize();
+        let $form = $(this);
+        let url = $form.attr('action');
+        let data = $form.serialize();
 
         $.ajax({
-            type: 'POST',
             url: url,
+            type: 'POST',
             data: data,
-            success: function(response) {
-                if (response.status === 'ok') {
-                    var $button = $form.find('button');
-                    if (response.is_favorite) {
-                        $button.removeClass('btn-outline-primary').addClass('btn-primary');
-                        $button.find('i').removeClass('bi-clipboard-heart-fill').addClass('bi-clipboard-heart');
-                        $form.attr('action', '{% url "remove_favorite" %}');
-                    } else {
-                        $button.removeClass('btn-primary').addClass('btn-outline-primary');
-                        $button.find('i').removeClass('bi-clipboard-heart').addClass('bi-clipboard-heart-fill');
-                        $form.attr('action', '{% url "add_favorite" %}');
-                    }
-                }
-            },
-            error: function() {
-                alert('There was an error processing your request. Please try again.');
+            dataType: 'json',
+        }).done(function(response){
+            if (response.status === 'success') {
+                $form.closest('td').html(response.html);
+            } else {
+                alert('There was an error: ' + response.message);
             }
+        }).fail(function(response){
+            alert('There was an error processing your request. Please try again.');
         });
     });
-});

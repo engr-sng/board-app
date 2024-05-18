@@ -14,6 +14,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.http import HttpResponse
 
 def user_owns_board(view_func):
     @wraps(view_func)
@@ -187,17 +188,23 @@ def add_favorite(request):
         form = FavoriteForm(request.POST)
         if form.is_valid():
             form.instance.user = request.user
-            form.save()
-            return JsonResponse({'status': 'ok', 'is_favorite': True})
+            favorite = form.save()
+            board = favorite.board
+            board.is_favorite = 1
+            html = render_to_string('favorite_button.html', {'board': board, 'user': request.user}, request=request)
+            return JsonResponse({'status': 'success', 'html': html})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 @login_required
 def remove_favorite(request):
     if request.method == 'POST':
         try:
-            favorite = Favorite.objects.get(user=request.user, board=request.POST.get('board'))
+            favorite = Favorite.objects.get(user=request.user, board_id=request.POST.get('board'))
             favorite.delete()
-            return JsonResponse({'status': 'ok', 'is_favorite': False})
+            board = favorite.board
+            board.is_favorite = 0
+            html = render_to_string('favorite_button.html', {'board': board, 'user': request.user}, request=request)
+            return JsonResponse({'status': 'success', 'html': html})
         except Favorite.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Favorite not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
