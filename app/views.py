@@ -187,17 +187,26 @@ def add_favorite(request):
         form = FavoriteForm(request.POST)
         if form.is_valid():
             form.instance.user = request.user
-            form.save()
-            return redirect('index')
-    return redirect('index')
+            favorite = form.save()
+            board = favorite.board
+            board.is_favorite = 1
+            html = render_to_string('favorite_button.html', {'board': board, 'user': request.user}, request=request)
+            return JsonResponse({'status': 'success', 'html': html})
+    return JsonResponse({'status': 'error', 'message': '無効なリクエストです。'})
 
 @login_required
 def remove_favorite(request):
     if request.method == 'POST':
-        favorite = Favorite.objects.get(user=request.user, board=request.POST.get('board'))
-        favorite.delete()
-        return redirect('index')
-    return redirect('index')
+        try:
+            favorite = Favorite.objects.get(user=request.user, board_id=request.POST.get('board'))
+            favorite.delete()
+            board = favorite.board
+            board.is_favorite = 0
+            html = render_to_string('favorite_button.html', {'board': board, 'user': request.user}, request=request)
+            return JsonResponse({'status': 'success', 'html': html})
+        except Favorite.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'お気に入りされていません。'})
+    return JsonResponse({'status': 'error', 'message': '無効なリクエストです。'})
 
 def contact(request):
     if request.method == 'POST':
