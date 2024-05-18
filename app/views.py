@@ -14,7 +14,6 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.http import HttpResponse
 
 def user_owns_board(view_func):
     @wraps(view_func)
