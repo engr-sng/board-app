@@ -188,16 +188,19 @@ def add_favorite(request):
         if form.is_valid():
             form.instance.user = request.user
             form.save()
-            return redirect('index')
-    return redirect('index')
+            return JsonResponse({'status': 'ok', 'is_favorite': True})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 @login_required
 def remove_favorite(request):
     if request.method == 'POST':
-        favorite = Favorite.objects.get(user=request.user, board=request.POST.get('board'))
-        favorite.delete()
-        return redirect('index')
-    return redirect('index')
+        try:
+            favorite = Favorite.objects.get(user=request.user, board=request.POST.get('board'))
+            favorite.delete()
+            return JsonResponse({'status': 'ok', 'is_favorite': False})
+        except Favorite.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Favorite not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 def contact(request):
     if request.method == 'POST':

@@ -65,13 +65,13 @@
                         <td>
                             {% if user.is_authenticated %}
                                 {% if board.is_favorite %}
-                                    <form action="{% url 'remove_favorite' %}" method="POST">
+                                    <form action="{% url 'remove_favorite' %}" method="POST" class="favorite-form">
                                         {% csrf_token %}
                                         <input type="hidden" name="board" value="{{ board.id }}">
                                         <button type="submit" class="btn btn-primary"><i class="bi bi-clipboard-heart"></i></button>
                                     </form>
                                 {% else %}
-                                    <form action="{% url 'add_favorite' %}" method="POST">
+                                    <form action="{% url 'add_favorite' %}" method="POST" class="favorite-form">
                                         {% csrf_token %}
                                         <input type="hidden" name="board" value="{{ board.id }}">
                                         <button type="submit" class="btn btn-outline-primary"><i class="bi bi-clipboard-heart-fill"></i></button>
