@@ -16,5 +16,7 @@ urlpatterns = [
     path('<int:board_pk>/comment/<int:comment_pk>/delete/', login_required(views.comment_delete), name='comment_delete'),
     path('my_boards/', login_required(views.my_boards), name='my_boards'),
     path('search/', views.board_search, name='search'),
-    path('sort/', views.board_sort, name='sort')
+    path('sort/', views.board_sort, name='sort'),
+    path('add_favorite/', views.add_favorite, name='add_favorite'),
+    path('remove_favorite/', views.remove_favorite, name='remove_favorite'),
 ]

@@ -1,6 +1,6 @@
 # app/forms.py
 from django import forms
-from .models import Board, Comment
+from .models import Board, Comment, Favorite
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -21,3 +21,8 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class FavoriteForm(forms.ModelForm):
+    class Meta:
+        model = Favorite
+        fields = ['board']
