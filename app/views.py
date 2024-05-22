@@ -9,8 +9,9 @@ from functools import wraps
 from django.http import JsonResponse
 from django.db.models import Count
 from django.db import models
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
+from django.template.loader import render_to_string
 
 def user_owns_board(view_func):
     @wraps(view_func)
@@ -97,7 +98,21 @@ def comment_create(request, pk):
         if comment_form.is_valid():
             comment_form.instance.user = request.user
             comment_form.instance.board_id = pk
-            comment_form.save()
+            comment = comment_form.save()
+
+        # 掲示板所有者とお気に入りに登録しているユーザーにメール通知
+        favorite_users = Board.objects.get(pk=pk).favorited_by.values_list('email', flat=True)
+        recipient_list = [Board.objects.get(pk=pk).user.email] + list(favorite_users)
+        subject = '新しいコメントが投稿されました。'
+        message = render_to_string('mail/comment_notification_email.html', {
+            'title': Board.objects.get(pk=pk).title,
+            'url': 'http://127.0.0.1:8000/'+ str(pk) + '/',
+            'user': request.user.username,
+            'comment': comment.content,
+        })
+        email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, [], bcc=recipient_list)
+        email.send()
+
     return redirect('show', pk=pk)
 
 @login_required
